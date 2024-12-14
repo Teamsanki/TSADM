@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | TEAM SANKI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: orange;
+            margin-bottom: 30px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 80%;
+        }
+
+        button {
+            background-color: orange;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff8c00;
+        }
+
+        #userList {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        #userList div {
+            margin: 10px 0;
+        }
+
+        footer {
+            margin-top: 50px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Admin Panel</h1>
+
+    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+    <button onclick="loginAdmin()">Login</button>
+
+    <div id="userList" style="display:none;">
+        <h2>Users in Queue</h2>
+        <div id="users"></div>
+        <button onclick="chatWithUser()">Start Chat</button>
+    </div>
+
+    <footer>
+        <p>© <span id="year"></span> TEAM SANKI. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAemwBwNix4TbWHA7vrh5ubQaRqEY8VWKk",
+      authDomain: "social-bite-skofficial.firebaseapp.com",
+      databaseURL: "https://social-bite-skofficial-default-rtdb.firebaseio.com",
+      projectId: "social-bite-skofficial",
+      storageBucket: "social-bite-skofficial.appspot.com",
+      messagingSenderId: "239722707022",
+      appId: "1:239722707022:web:57d9b173f2163e85be2b1f",
+            measurementId: "G-EJE8L74022"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const correctPassword = "SK112566";
+        const adminEmail = "griexgamer@gmail.com";
+
+        // Get current year for copyright
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value.trim();
+            if (password === correctPassword) {
+                alert("Admin logged in successfully.");
+                loadUserQueue();
+            } else {
+                alert("Incorrect password.");
+            }
+        }
+
+        function loadUserQueue() {
+            const usersRef = database.ref('users/');
+            usersRef.once('value', (snapshot) => {
+                const users = snapshot.val();
+                const userListDiv = document.getElementById('users');
+                userListDiv.innerHTML = "";
+                for (const key in users) {
+                    const user = users[key];
+                    const userDiv = document.createElement('div');
+                    userDiv.textContent = `Name: ${user.name}, Queue Position: ${user.queuePosition}`;
+                    userListDiv.appendChild(userDiv);
+                }
+                document.getElementById('userList').style.display = 'block';
+            });
+        }
+
+        function chatWithUser() {
+            const user = prompt("Enter the user's Telegram username to chat with.");
+            if (user) {
+                alert(`Connected to user ${user}.`);
+            }
+        }
+    </script>
+</body>
+</html>
